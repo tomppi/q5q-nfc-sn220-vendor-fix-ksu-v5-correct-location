@@ -1,8 +1,16 @@
-# Overlay files may appear as u:object_r:system_file:s0 or adb_data_file.
-# The NXP NFC HAL needs to read RF config and firmware from the overlay.
+# Overlay/bind-mounted files may appear as system_file, adb_data_file or vendor_file.
+# The NXP NFC HAL must read RF config and firmware.
 allow hal_nfc_default system_file dir { getattr search open read }
 allow hal_nfc_default system_file file { getattr open read map }
 allow hal_nfc_default adb_data_file dir { getattr search open read }
 allow hal_nfc_default adb_data_file file { getattr open read map }
 allow hal_nfc_default vendor_file dir { getattr search open read }
 allow hal_nfc_default vendor_file file { getattr open read map }
+
+# Some overlay helpers attempt relabel operations during early boot. These rules are
+# not enough to create missing vendor-root files by themselves, but they reduce noise
+# when the overlay method supports labels/xattrs.
+allow init system_file dir { getattr open read relabelfrom relabelto search }
+allow init system_file file { getattr open read relabelfrom relabelto }
+allow init vendor_file dir { getattr open read relabelfrom relabelto search }
+allow init vendor_file file { getattr open read relabelfrom relabelto }
