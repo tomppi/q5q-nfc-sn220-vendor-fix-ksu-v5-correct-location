@@ -1,0 +1,25 @@
+name: Build installable module zip
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build module zip
+        run: |
+          chmod +x tools/build-module-zip.sh
+          ./tools/build-module-zip.sh
+
+      - name: Upload module artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: q5q-nfc-sn220-vendor-fix-ksu-v7.1
+          path: |
+            out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip
+            out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip.sha256
