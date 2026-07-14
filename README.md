@@ -29,15 +29,25 @@ The ROM-source fix is equivalent to the Exynoobs q5q proprietary-files mapping:
 vendor/etc/nfc/libnfc-nxp_RF.conf:vendor/libnfc-nxp_RF.conf
 ```
 
-## Important install note
+## Which ZIP to flash
 
-Do **not** install GitHub's automatic source-code ZIP directly. It wraps files in a top-level repo folder and can make ReSukiSU/KernelSU fail with:
+Use the direct flashable ZIP from **GitHub Releases**:
+
+```txt
+q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip
+```
+
+Do **not** flash GitHub's automatic source-code ZIP.
+
+Do **not** flash the GitHub Actions artifact wrapper ZIP directly. Actions artifact downloads are wrapper ZIPs; if you use one, extract it first and then flash the inner `q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip`.
+
+Flashing the wrong wrapper/source zip can make KernelSU/ReSukiSU identify the module as `unknown` or fail with:
 
 ```txt
 Error: specified file not found in archive
 ```
 
-Use the workflow-built artifact/release zip, or run `tools/build-module-zip.sh` locally. The installable module zip must have `module.prop`, `customize.sh`, `post-fs-data.sh`, and `sepolicy.rule` at the archive root.
+The installable module zip must have `module.prop`, `customize.sh`, `post-fs-data.sh`, and `sepolicy.rule` at the archive root.
 
 ## Overlayfs / Mountify note
 
@@ -58,6 +68,19 @@ source: /data/adb/modules/q5q_nfc_sn220_vendor_fix/system/vendor/libnfc-nxp_RF.c
 ```
 
 If your kernel lacks `CONFIG_TMPFS_XATTR=y`, tmpfs-backed overlay helpers may not preserve SELinux labels correctly. Prefer an overlayfs method with upper/work directories on `/data`.
+
+## Build locally
+
+```sh
+chmod +x tools/build-module-zip.sh
+./tools/build-module-zip.sh
+```
+
+Then flash:
+
+```txt
+out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip
+```
 
 ## Verify
 
