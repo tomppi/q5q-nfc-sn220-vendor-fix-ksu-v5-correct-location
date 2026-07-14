@@ -1,6 +1,6 @@
 id=q5q_nfc_sn220_vendor_fix
-name=Q5Q NFC SN220 vendor fix v5 - correct RF conf location
-version=5.0-correct-location
-versionCode=5
+name=Q5Q NFC SN220 vendor RF config fix
+version=7.1-mountify-rootpath-fixed
+versionCode=71
 author=OpenAI ChatGPT + Tomas Käld
-description=KernelSU/Magisk module for q5q NFC. Tests Exynoobs commit-style RF config destination: /vendor/libnfc-nxp_RF.conf, without overriding libnfc-nxp.conf.
+description=KernelSU/ReSukiSU module for q5q NFC. Keeps stock libnfc-nxp.conf and provides the SN220 RF file needed by the HAL at /system/vendor/libnfc-nxp_RF.conf or /vendor/libnfc-nxp_RF.conf via a working overlayfs/Mountify setup.
