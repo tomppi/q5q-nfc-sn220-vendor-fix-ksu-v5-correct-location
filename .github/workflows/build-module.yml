@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,11 +18,41 @@ jobs:
         run: |
           chmod +x tools/build-module-zip.sh
           ./tools/build-module-zip.sh
+          cat > out/README-EXTRACT-FIRST.txt <<'EOF'
+          GitHub Actions artifact downloads are wrapper ZIPs.
 
-      - name: Upload module artifact
+          Do NOT flash the artifact ZIP itself.
+
+          Extract it first, then flash:
+            q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip
+
+          The direct GitHub Release asset with the same name is flashable without extracting.
+          EOF
+
+      - name: Upload artifact wrapper for debugging
         uses: actions/upload-artifact@v4
         with:
-          name: q5q-nfc-sn220-vendor-fix-ksu-v7.1
+          name: EXTRACT-FIRST-do-not-flash-artifact-wrapper
           path: |
             out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip
             out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip.sha256
+            out/README-EXTRACT-FIRST.txt
+
+      - name: Publish direct flashable release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: q5q-nfc-fix-v7.1
+          name: Q5Q NFC SN220 vendor fix v7.1
+          body: |
+            Direct flashable KernelSU/ReSukiSU module ZIP.
+
+            Download and flash `q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip` from this release.
+
+            Do not flash GitHub Actions artifact wrapper ZIPs directly; extract them first.
+          files: |
+            out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip
+            out/q5q-nfc-sn220-vendor-fix-ksu-v7.1.zip.sha256
+          draft: false
+          prerelease: false
+          make_latest: true
+          overwrite_files: true
